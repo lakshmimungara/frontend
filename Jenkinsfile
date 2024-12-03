@@ -1,4 +1,3 @@
-
 pipeline {
     agent {
         label 'AGENT-1'
@@ -9,7 +8,6 @@ pipeline {
         //retry(1)
     }
     environment {
-        // DEBUG = 'true'
         appVersion = '' // this will become global, we can use across pipeline
         region = 'us-east-1'
         account_id = '169810528182'
@@ -28,6 +26,31 @@ pipeline {
                 }
             }
         }
+        stage('Install Dependencies') {
+            steps {
+                sh 'npm install'
+            }
+        }
+        /* stage('SonarQube analysis') {
+            environment {
+                SCANNER_HOME = tool 'sonar-6.0' //scanner config
+            }
+            steps {
+                // sonar server injection
+                withSonarQubeEnv('sonar-6.0') {
+                    sh '$SCANNER_HOME/bin/sonar-scanner'
+                    //generic scanner, it automatically understands the language and provide scan results
+                }
+            }
+        }
+
+        stage('SQuality Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        } */
         stage('Docker build') {
             
             steps {
